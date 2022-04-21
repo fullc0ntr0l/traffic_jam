@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { debounce } from "lodash";
 import { Cars } from "./configs/cars";
 import { Road } from "./elements/road";
+import { Car } from "./elements/car";
 
 const app = new PIXI.Application({
   width: window.innerWidth,
@@ -34,7 +35,12 @@ function drawTraffic() {
   app.stage.removeChildren();
   app.stage.addChild(road);
 
-  // app.ticker.add(() => {
-  //   console.log("tick");
-  // });
+  const car1 = new Car(app, 1).createSprite();
+  const car2 = new Car(app, 2).createSprite();
+  const car3 = new Car(app, 3).createSprite();
+  const car4 = new Car(app, 4).createSprite();
+  road.addChild(car1);
+  road.addChild(car2);
+  road.addChild(car3);
+  road.addChild(car4);
 }

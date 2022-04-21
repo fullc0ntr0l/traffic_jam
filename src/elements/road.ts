@@ -9,7 +9,21 @@ export class Road {
     this.app = app;
   }
 
-  createSurface() {
+  public createContainer() {
+    const container = new PIXI.Container();
+
+    container.x = 0;
+    container.y = this.app.renderer.height / 2 - Dimensions.roadTotalWidth / 2;
+    container.height = Dimensions.roadTotalWidth;
+    container.width = this.app.renderer.width;
+
+    container.addChild(this.createSurface());
+    container.addChild(this.createSeparatingLines());
+
+    return container;
+  }
+
+  private createSurface() {
     const graphics = new PIXI.Graphics();
 
     graphics.clear();
@@ -20,7 +34,7 @@ export class Road {
     return graphics;
   }
 
-  createSeparatingLines() {
+  private createSeparatingLines() {
     const graphics = new PIXI.Graphics();
 
     graphics.clear();
@@ -68,19 +82,5 @@ export class Road {
     graphics.endFill();
 
     return graphics;
-  }
-
-  createContainer() {
-    const container = new PIXI.Container();
-
-    container.x = 0;
-    container.y = this.app.renderer.height / 2 - Dimensions.roadTotalWidth / 2;
-    container.height = Dimensions.roadTotalWidth;
-    container.width = this.app.renderer.width;
-
-    container.addChild(this.createSurface());
-    container.addChild(this.createSeparatingLines());
-
-    return container;
   }
 }

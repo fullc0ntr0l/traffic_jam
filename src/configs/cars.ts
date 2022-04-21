@@ -1,6 +1,6 @@
 import { sample } from "lodash";
 
-interface ICarConfiguration {
+export interface ICarConfiguration {
   name: string;
   maxSpeed: number;
 }
