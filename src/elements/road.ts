@@ -3,13 +3,15 @@ import { range } from "lodash";
 import { Dimensions } from "../configs/dimensions";
 
 export class Road {
+  public container: PIXI.Container;
   private app: PIXI.Application;
 
   constructor(app: PIXI.Application) {
     this.app = app;
+    this.container = this.createContainer();
   }
 
-  public createContainer() {
+  private createContainer() {
     const container = new PIXI.Container();
 
     container.x = 0;

@@ -31,16 +31,16 @@ function drawTraffic() {
   rootElement!.replaceChildren();
   rootElement!.appendChild(app.view);
 
-  const road = new Road(app).createContainer();
+  const road = new Road(app);
   app.stage.removeChildren();
-  app.stage.addChild(road);
+  app.stage.addChild(road.container);
 
-  const car1 = new Car(app, 1).createSprite();
-  const car2 = new Car(app, 2).createSprite();
-  const car3 = new Car(app, 3).createSprite();
-  const car4 = new Car(app, 4).createSprite();
-  road.addChild(car1);
-  road.addChild(car2);
-  road.addChild(car3);
-  road.addChild(car4);
+  const car1 = new Car(app, 1);
+  // const car2 = new Car(app, 2).createSprite();
+  // const car3 = new Car(app, 3).createSprite();
+  // const car4 = new Car(app, 4).createSprite();
+  road.container.addChild(car1.sprite);
+  // road.addChild(car2);
+  // road.addChild(car3);
+  // road.addChild(car4);
 }

@@ -5,6 +5,7 @@ import { Dimensions } from "../configs/dimensions";
 const STARTING_POSITION = -200;
 
 export class Car {
+  public sprite: PIXI.Sprite;
   private app: PIXI.Application;
   private laneNumber: number;
   private configuration: ICarConfiguration;
@@ -17,9 +18,10 @@ export class Car {
     this.app = app;
     this.laneNumber = laneNumber;
     this.configuration = configuration;
+    this.sprite = this.createSprite();
   }
 
-  public createSprite() {
+  private createSprite() {
     const sprite = PIXI.Sprite.from(
       Cars.imageForConfiguration(this.configuration)
     );
