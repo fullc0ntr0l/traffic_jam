@@ -6,34 +6,34 @@ export interface ICarConfiguration {
 }
 
 export class Cars {
-  static carLength = 100;
-  static carWidth = 50;
+  static carLength = 64;
+  static carWidth = 32;
   static configurations: ICarConfiguration[] = [
-    { name: "29Special", maxSpeed: 70 },
-    { name: "BeastGTS", maxSpeed: 120 },
-    { name: "Bulldog", maxSpeed: 100 },
-    { name: "Challenger", maxSpeed: 90 },
-    { name: "Cossie", maxSpeed: 85 },
-    { name: "Counthash", maxSpeed: 80 },
-    { name: "F-19", maxSpeed: 110 },
-    { name: "Flamer", maxSpeed: 70 },
-    { name: "Hotrod", maxSpeed: 75 },
-    { name: "Itali", maxSpeed: 90 },
-    { name: "ItaliGTB", maxSpeed: 95 },
-    { name: "ItaliGTO", maxSpeed: 100 },
-    { name: "Jugular", maxSpeed: 120 },
-    { name: "LeBonham", maxSpeed: 95 },
-    { name: "Mamba", maxSpeed: 110 },
-    { name: "Panther", maxSpeed: 115 },
-    { name: "Penetrator", maxSpeed: 100 },
-    { name: "Police", maxSpeed: 150 },
-    { name: "Porka", maxSpeed: 90 },
-    { name: "PorkaTurbo", maxSpeed: 130 },
-    { name: "Roadster", maxSpeed: 95 },
-    { name: "Speeder", maxSpeed: 115 },
-    { name: "Stallion", maxSpeed: 80 },
-    { name: "Stinger", maxSpeed: 90 },
-    { name: "StingerZ29", maxSpeed: 100 },
+    { name: "29Special", maxSpeed: 2.3 },
+    { name: "BeastGTS", maxSpeed: 4 },
+    { name: "Bulldog", maxSpeed: 3.5 },
+    { name: "Challenger", maxSpeed: 3 },
+    { name: "Cossie", maxSpeed: 2.8 },
+    { name: "Counthash", maxSpeed: 2.75 },
+    { name: "F-19", maxSpeed: 3.3 },
+    { name: "Flamer", maxSpeed: 2.3 },
+    { name: "Hotrod", maxSpeed: 2.5 },
+    { name: "Itali", maxSpeed: 3 },
+    { name: "ItaliGTB", maxSpeed: 3.1 },
+    { name: "ItaliGTO", maxSpeed: 3.3 },
+    { name: "Jugular", maxSpeed: 4 },
+    { name: "LeBonham", maxSpeed: 3.1 },
+    { name: "Mamba", maxSpeed: 3.3 },
+    { name: "Panther", maxSpeed: 3.5 },
+    { name: "Penetrator", maxSpeed: 3.3 },
+    { name: "Police", maxSpeed: 5 },
+    { name: "Porka", maxSpeed: 3 },
+    { name: "PorkaTurbo", maxSpeed: 4.3 },
+    { name: "Roadster", maxSpeed: 3.1 },
+    { name: "Speeder", maxSpeed: 3.5 },
+    { name: "Stallion", maxSpeed: 2.7 },
+    { name: "Stinger", maxSpeed: 3 },
+    { name: "StingerZ29", maxSpeed: 3.3 },
   ];
 
   static randomConfiguration() {

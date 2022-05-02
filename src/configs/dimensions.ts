@@ -1,11 +1,11 @@
 import { Cars } from "./cars";
 
 export class Dimensions {
-  static roadPadding = 25;
+  static roadPadding = 12;
   static numberOfLanes = 4;
-  static lanePadding = 5;
-  static lanesSeparatorWidth = 5;
-  static dashedLinesLength = 80;
+  static lanePadding = 4;
+  static lanesSeparatorWidth = 2;
+  static dashedLinesLength = 40;
 
   static get laneTotalWidth() {
     return this.lanePadding * 2 + Cars.carWidth;

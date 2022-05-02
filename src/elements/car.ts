@@ -1,14 +1,13 @@
 import * as PIXI from "pixi.js";
+import { inRange } from "lodash";
 import { Cars, ICarConfiguration } from "../configs/cars";
 import { Dimensions } from "../configs/dimensions";
 
-const STARTING_POSITION = -200;
-
 export class Car {
   public sprite: PIXI.Sprite;
+  public configuration: ICarConfiguration;
+  public laneNumber: number;
   private app: PIXI.Application;
-  private laneNumber: number;
-  private configuration: ICarConfiguration;
 
   constructor(
     app: PIXI.Application,
@@ -16,40 +15,49 @@ export class Car {
     configuration = Cars.randomConfiguration()
   ) {
     this.app = app;
-    this.laneNumber = laneNumber;
     this.configuration = configuration;
     this.sprite = this.createSprite();
+    this.laneNumber = laneNumber;
+    this.changeLane(laneNumber);
   }
 
-  private createSprite() {
-    const sprite = PIXI.Sprite.from(
-      Cars.imageForConfiguration(this.configuration)
-    );
-    sprite.anchor.set(0.5);
+  public drive = () => {
+    this.sprite.x += this.configuration.maxSpeed;
+  };
+
+  public changeLane = (laneNumber: number) => {
+    this.laneNumber = laneNumber;
+    this.sprite.y = this.calculateY(laneNumber);
+  };
+
+  public isFullyVisible = (): boolean => {
+    return inRange(this.sprite.x, Cars.carLength, this.app.renderer.width);
+  };
+
+  public isFullyHidden = (): boolean => {
+    return !inRange(this.sprite.x, 1, this.app.renderer.width + Cars.carLength);
+  };
+
+  private createSprite = () => {
+    const image = Cars.imageForConfiguration(this.configuration);
+    const sprite = PIXI.Sprite.from(image);
+    sprite.anchor.set(0, 0.5);
     sprite.angle = 180;
     sprite.x = 0;
-    sprite.y = this.calculateY();
+    sprite.y = 0;
     sprite.width = Cars.carLength;
     sprite.height = Cars.carWidth;
 
-    this.app.ticker.add(() => {
-      if (sprite.x > this.app.renderer.width + 200) {
-        sprite.x = STARTING_POSITION;
-      } else {
-        sprite.x += this.configuration.maxSpeed / 25;
-      }
-    });
-
     return sprite;
-  }
+  };
 
-  private calculateY(): number {
+  private calculateY = (laneNumber: number): number => {
     return (
       Dimensions.roadPadding +
       Dimensions.lanesSeparatorWidth +
       Dimensions.laneTotalWidth / 2 +
-      (this.laneNumber - 1) *
+      (laneNumber - 1) *
         (Dimensions.laneTotalWidth + Dimensions.lanesSeparatorWidth)
     );
-  }
+  };
 }
