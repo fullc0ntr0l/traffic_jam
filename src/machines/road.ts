@@ -32,7 +32,11 @@ export const roadMachine = createMachine<IContex>({
             cars: (context, event) => [
               ...context.cars,
               spawn(
-                carMachineWithContext(context.app, event.laneNumber),
+                carMachineWithContext(
+                  context.app,
+                  event.laneNumber,
+                  event.frontCar
+                ),
                 `car-${event.id}`
               ),
             ],

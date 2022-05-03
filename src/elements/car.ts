@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { inRange } from "lodash";
+import { inRange, random } from "lodash";
 import { Cars, ICarConfiguration } from "../configs/cars";
 import { Dimensions } from "../configs/dimensions";
 
@@ -7,6 +7,8 @@ export class Car {
   public sprite: PIXI.Sprite;
   public configuration: ICarConfiguration;
   public laneNumber: number;
+  public maxSpeed: number;
+  public speed: number;
   private app: PIXI.Application;
 
   constructor(
@@ -18,11 +20,13 @@ export class Car {
     this.configuration = configuration;
     this.sprite = this.createSprite();
     this.laneNumber = laneNumber;
+    this.maxSpeed = random(3.0, 4.0);
+    this.speed = this.maxSpeed;
     this.changeLane(laneNumber);
   }
 
   public drive = () => {
-    this.sprite.x += this.configuration.maxSpeed;
+    this.sprite.x += this.speed;
   };
 
   public changeLane = (laneNumber: number) => {
@@ -36,6 +40,17 @@ export class Car {
 
   public isFullyHidden = (): boolean => {
     return !inRange(this.sprite.x, 1, this.app.renderer.width + Cars.carLength);
+  };
+
+  public isCloseToCar = (car: Car): boolean => {
+    if (this.laneNumber !== car.laneNumber) {
+      return false;
+    }
+
+    return (
+      this.sprite.position.x + Dimensions.minDistanceBetweenCars >=
+      car.sprite.position.x - Cars.carLength
+    );
   };
 
   private createSprite = () => {

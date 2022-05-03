@@ -6,6 +6,7 @@ export class Dimensions {
   static lanePadding = 4;
   static lanesSeparatorWidth = 2;
   static dashedLinesLength = 40;
+  static minDistanceBetweenCars = 25;
 
   static get laneTotalWidth() {
     return this.lanePadding * 2 + Cars.carWidth;
