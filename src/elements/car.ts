@@ -62,6 +62,7 @@ export class Car {
     sprite.y = 0;
     sprite.width = Config.carLength;
     sprite.height = Config.carWidth;
+    sprite.interactive = true;
 
     return sprite;
   };
