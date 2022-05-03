@@ -3,7 +3,7 @@ import { range } from "lodash";
 import { createMachine, assign, spawn } from "xstate";
 import { carMachineWithContext } from "./car";
 import { App } from "../elements/app";
-import { Dimensions } from "../configs/dimensions";
+import { Config } from "../config";
 
 interface IContex {
   app: App;
@@ -46,7 +46,7 @@ export const roadMachine = createMachine<IContex>({
       invoke: {
         id: "newCarInterval",
         src: () => (callback) => {
-          range(1, Dimensions.numberOfLanes + 1).forEach((laneNumber) => {
+          range(1, Config.numberOfLanes + 1).forEach((laneNumber) => {
             callback({ type: "NEW_CAR", laneNumber });
           });
         },

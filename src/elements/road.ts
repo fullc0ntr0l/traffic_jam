@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { range } from "lodash";
-import { Dimensions } from "../configs/dimensions";
+import { Config } from "../config";
 
 export class Road {
   public container: PIXI.Container;
@@ -15,8 +15,8 @@ export class Road {
     const container = new PIXI.Container();
 
     container.x = 0;
-    container.y = this.app.renderer.height / 2 - Dimensions.roadTotalWidth / 2;
-    container.height = Dimensions.roadTotalWidth;
+    container.y = this.app.renderer.height / 2 - Config.roadTotalWidth / 2;
+    container.height = Config.roadTotalWidth;
     container.width = this.app.renderer.width;
 
     container.addChild(this.createSurface());
@@ -30,7 +30,7 @@ export class Road {
 
     graphics.clear();
     graphics.beginFill(0x484848);
-    graphics.drawRect(0, 0, this.app.renderer.width, Dimensions.roadTotalWidth);
+    graphics.drawRect(0, 0, this.app.renderer.width, Config.roadTotalWidth);
     graphics.endFill();
 
     return graphics;
@@ -45,39 +45,33 @@ export class Road {
     // Draw continuous lines at the margins
     graphics.drawRect(
       0,
-      Dimensions.roadPadding,
+      Config.roadPadding,
       this.app.renderer.width,
-      Dimensions.lanesSeparatorWidth
+      Config.lanesSeparatorWidth
     );
     graphics.drawRect(
       0,
-      Dimensions.roadTotalWidth -
-        Dimensions.roadPadding -
-        Dimensions.lanesSeparatorWidth,
+      Config.roadTotalWidth - Config.roadPadding - Config.lanesSeparatorWidth,
       this.app.renderer.width,
-      Dimensions.lanesSeparatorWidth
+      Config.lanesSeparatorWidth
     );
 
     // Draw dashed lines between lanes
     range(
-      -(Dimensions.dashedLinesLength / 2),
+      -(Config.dashedLinesLength / 2),
       this.app.renderer.width,
-      Dimensions.dashedLinesLength * 1.5
+      Config.dashedLinesLength * 1.5
     ).forEach((x) => {
       range(
-        Dimensions.roadPadding +
-          Dimensions.lanesSeparatorWidth +
-          Dimensions.laneTotalWidth,
-        Dimensions.roadTotalWidth -
-          Dimensions.roadPadding -
-          Dimensions.lanesSeparatorWidth,
-        Dimensions.laneTotalWidth + Dimensions.lanesSeparatorWidth
+        Config.roadPadding + Config.lanesSeparatorWidth + Config.laneTotalWidth,
+        Config.roadTotalWidth - Config.roadPadding - Config.lanesSeparatorWidth,
+        Config.laneTotalWidth + Config.lanesSeparatorWidth
       ).forEach((y) => {
         graphics.drawRect(
           x,
           y,
-          Dimensions.dashedLinesLength,
-          Dimensions.lanesSeparatorWidth
+          Config.dashedLinesLength,
+          Config.lanesSeparatorWidth
         );
       });
     });
