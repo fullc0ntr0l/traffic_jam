@@ -16,7 +16,7 @@ export class Car {
   ) {
     this.app = app;
     this.sprite = this.createSprite(carImage);
-    this.maxSpeed = random(3.0, 4.0, true);
+    this.maxSpeed = random(2.5, 3.5, true);
     this.speed = this.maxSpeed;
     this.laneNumber = laneNumber;
     this.changeLane(laneNumber);
