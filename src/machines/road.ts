@@ -3,6 +3,7 @@ import { range } from "lodash";
 import { createMachine, assign, spawn } from "xstate";
 import { carMachineWithContext } from "./car";
 import { App } from "../elements/app";
+import { Car } from "../elements/car";
 import { Config } from "../config";
 
 interface IContex {
@@ -11,49 +12,51 @@ interface IContex {
 }
 
 const pixiApp = new PIXI.Application({
-  width: 640,
-  height: 320,
-  backgroundColor: 0x22b14c,
+  width: Config.appWidth,
+  height: Config.appHeight,
+  backgroundColor: Config.appBackgroundColor,
 });
 
-export const roadMachine = createMachine<IContex>({
-  context: {
-    app: new App(pixiApp),
-    cars: [],
-  },
+export const roadMachine = createMachine<IContex>(
+  {
+    context: {
+      app: new App(pixiApp),
+      cars: [],
+    },
 
-  initial: "open",
+    initial: "open",
 
-  states: {
-    open: {
-      on: {
-        NEW_CAR: {
-          actions: assign({
-            cars: (context, event) => [
-              ...context.cars,
-              spawn(
-                carMachineWithContext(
-                  context.app,
-                  event.laneNumber,
-                  event.frontCar
-                ),
-                `car-${event.id}`
-              ),
-            ],
-          }),
+    states: {
+      open: {
+        on: {
+          NEW_CAR: {
+            actions: ["spawnNewCar"],
+          },
+        },
+        invoke: {
+          src: () => (callback) => {
+            range(1, Config.numberOfLanes + 1).forEach((laneNumber) =>
+              callback({ type: "NEW_CAR", laneNumber })
+            );
+          },
         },
       },
-      invoke: {
-        id: "newCarInterval",
-        src: () => (callback) => {
-          range(1, Config.numberOfLanes + 1).forEach((laneNumber) => {
-            callback({ type: "NEW_CAR", laneNumber });
-          });
-        },
+      closed: {
+        type: "final",
       },
     },
-    closed: {},
-  },
 
-  entry: ({ app }) => app.load(),
-});
+    entry: ({ app }) => app.load(),
+  },
+  {
+    actions: {
+      spawnNewCar: assign(({ app, cars }, { laneNumber, frontCar }) => {
+        const car = new Car(laneNumber);
+
+        return {
+          cars: [...cars, spawn(carMachineWithContext(app, car, frontCar))],
+        };
+      }),
+    },
+  }
+);

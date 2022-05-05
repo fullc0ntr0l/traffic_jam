@@ -1,14 +1,11 @@
 import { createMachine, sendParent } from "xstate";
-import { random } from "lodash";
 import { App } from "../elements/app";
 import { Car } from "../elements/car";
-
-type CarVisibility = "hidden" | "visible" | undefined;
+import { Config } from "../config";
 
 interface ICarContext {
   app: App;
   car: Car;
-  frontCar?: Car;
 }
 
 export const carMachine = createMachine<ICarContext>(
@@ -18,32 +15,12 @@ export const carMachine = createMachine<ICarContext>(
     states: {
       drive: {
         invoke: {
-          id: "driveCar",
           src:
-            ({ app, car, frontCar }) =>
-            (callback) => {
-              let visibility: CarVisibility;
+            ({ app, car }) =>
+            () => {
               const tickerCallback = () => {
-                car.drive();
-
-                if (car.isFullyVisible()) {
-                  if (visibility !== "visible") {
-                    callback({ type: "NEW_CAR", laneNumber: car.laneNumber });
-                  }
-
-                  visibility = "visible";
-                }
-
-                if (car.isFullyHidden()) {
-                  if (visibility !== "hidden") {
-                    callback("FINISH");
-                  }
-
-                  visibility = "hidden";
-                }
-
-                if (frontCar && car.isCloseToCar(frontCar)) {
-                  car.speed = frontCar.speed;
+                if (car.isCloseToFrontCar()) {
+                  car.speed = car.frontCar!.speed;
                 }
               };
 
@@ -53,46 +30,57 @@ export const carMachine = createMachine<ICarContext>(
             },
         },
         on: {
-          NEW_CAR: {
-            actions: sendParent(
-              (context, { laneNumber }) => ({
-                type: "NEW_CAR",
-                laneNumber,
-                frontCar: context.car,
-              }),
-              { delay: "NEW_CAR_DELAY" }
-            ),
-          },
-          FINISH: "exit",
+          FINISH: "stop",
         },
       },
-      exit: {
-        type: "final",
-        entry: (context) => {
-          context.app.road.container.removeChild(context.car.sprite);
+
+      stop: {
+        entry: ({ car }) => {
+          car.followingCar!.frontCar = undefined;
+          car.followingCar = undefined;
         },
+        type: "final",
       },
     },
 
-    entry: (context) => {
-      context.app.road.container.addChild(context.car.sprite);
+    invoke: {
+      src:
+        ({ app, car }) =>
+        () => {
+          app.road.container.addChild(car.sprite);
+          app.pixiApp.ticker.add(car.drive);
+
+          return () => {
+            app.pixiApp.ticker.remove(car.drive);
+            app.road.container.removeChild(car.sprite);
+          };
+        },
+    },
+
+    after: {
+      NEW_CAR_DELAY: {
+        actions: sendParent(({ car }) => ({
+          type: "NEW_CAR",
+          laneNumber: car.laneNumber,
+          frontCar: car,
+        })),
+      },
+      CAR_LIFESPAN: { target: "stop" },
     },
   },
   {
     delays: {
-      NEW_CAR_DELAY: () => random(500, 1500),
+      NEW_CAR_DELAY: Config.randomCarSpawnTime,
+      CAR_LIFESPAN: Config.carLifespan,
     },
   }
 );
 
-export const carMachineWithContext = (
-  app: App,
-  laneNumber: number,
-  frontCar?: Car
-) => {
-  return carMachine.withContext({
-    app,
-    car: new Car(app.pixiApp, laneNumber),
-    frontCar,
-  });
+export const carMachineWithContext = (app: App, car: Car, frontCar?: Car) => {
+  if (frontCar) {
+    car.frontCar = frontCar;
+    frontCar.followingCar = car;
+  }
+
+  return carMachine.withContext({ app, car });
 };

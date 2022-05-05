@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js";
-import { inRange, random } from "lodash";
 import { Config } from "../config";
 
 export class Car {
@@ -7,16 +6,12 @@ export class Car {
   public maxSpeed: number;
   public speed: number;
   public laneNumber: number;
-  private app: PIXI.Application;
+  public frontCar?: Car;
+  public followingCar?: Car;
 
-  constructor(
-    app: PIXI.Application,
-    laneNumber: number,
-    carImage = Config.randomCarImage()
-  ) {
-    this.app = app;
+  constructor(laneNumber: number, carImage = Config.randomCarImage()) {
     this.sprite = this.createSprite(carImage);
-    this.maxSpeed = random(2.5, 3.5, true);
+    this.maxSpeed = Config.randomMaxSpeed();
     this.speed = this.maxSpeed;
     this.laneNumber = laneNumber;
     this.changeLane(laneNumber);
@@ -31,26 +26,18 @@ export class Car {
     this.sprite.y = this.calculateY(laneNumber);
   };
 
-  public isFullyVisible = (): boolean => {
-    return inRange(this.sprite.x, Config.carLength, this.app.renderer.width);
-  };
+  public isCloseToFrontCar = (): boolean => {
+    if (!this.frontCar) {
+      return false;
+    }
 
-  public isFullyHidden = (): boolean => {
-    return !inRange(
-      this.sprite.x,
-      1,
-      this.app.renderer.width + Config.carLength
-    );
-  };
-
-  public isCloseToCar = (car: Car): boolean => {
-    if (this.laneNumber !== car.laneNumber) {
+    if (this.laneNumber !== this.frontCar.laneNumber) {
       return false;
     }
 
     return (
       this.sprite.position.x + Config.minDistanceBetweenCars >=
-      car.sprite.position.x - Config.carLength
+      this.frontCar.sprite.position.x - Config.carLength
     );
   };
 
