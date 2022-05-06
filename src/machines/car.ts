@@ -8,73 +8,85 @@ interface ICarContext {
   car: Car;
 }
 
-export const carMachine = createMachine<ICarContext>(
-  {
-    initial: "drive",
+export const carMachine = createMachine<ICarContext>({
+  initial: "drive",
 
-    states: {
-      drive: {
-        invoke: {
-          src:
-            ({ app, car }) =>
-            () => {
-              const tickerCallback = () => {
-                if (car.isCloseToFrontCar()) {
-                  car.speed = car.frontCar!.speed;
-                }
-              };
+  states: {
+    drive: {
+      invoke: {
+        src:
+          ({ app, car }) =>
+          (callback) => {
+            const tickerCallback = () => {
+              if (car.isCloseToFrontCar()) {
+                car.speed = car.frontCar!.speed;
+              }
 
-              app.pixiApp.ticker.add(tickerCallback);
+              if (car.hasJustPassedPoint(Config.carLength)) {
+                callback("NEW_CAR");
+              }
 
-              return () => app.pixiApp.ticker.remove(tickerCallback);
-            },
-        },
-        on: {
-          FINISH: "stop",
-        },
-      },
+              if (car.hasJustPassedPoint(Config.carLength + app.pixiApp.renderer.width)) {
+                callback("FINISH");
+              }
+            };
 
-      stop: {
-        entry: ({ car }) => {
-          car.followingCar!.frontCar = undefined;
-          car.followingCar = undefined;
-        },
-        type: "final",
+            // const onMouseClick = () => {
+            //   if (car.followingCar) {
+            //     car.changeLane(car.laneNumber + 1);
+
+            //     car.followingCar.accelerate();
+            //   }
+            // };
+
+            app.pixiApp.ticker.add(tickerCallback);
+            // car.sprite.on("mousedown", onMouseClick);
+
+            return () => {
+              // car.sprite.off("mousedown", onMouseClick);
+              app.pixiApp.ticker.remove(tickerCallback);
+            };
+          },
       },
     },
 
-    invoke: {
-      src:
-        ({ app, car }) =>
-        () => {
-          app.road.container.addChild(car.sprite);
-          app.pixiApp.ticker.add(car.drive);
-
-          return () => {
-            app.pixiApp.ticker.remove(car.drive);
-            app.road.container.removeChild(car.sprite);
-          };
-        },
+    stop: {
+      entry: ({ car }) => {
+        car.followingCar!.frontCar = undefined;
+        car.followingCar = undefined;
+      },
+      type: "final",
     },
+  },
 
-    after: {
-      NEW_CAR_DELAY: {
-        actions: sendParent(({ car }) => ({
+  on: {
+    NEW_CAR: {
+      actions: sendParent(
+        ({ car }) => ({
           type: "NEW_CAR",
           laneNumber: car.laneNumber,
           frontCar: car,
-        })),
-      },
-      CAR_LIFESPAN: { target: "stop" },
+        }),
+        { delay: Config.randomCarSpawnTime() }
+      ),
     },
+    FINISH: { target: "stop" },
   },
-  {
-    delays: {
-      NEW_CAR_DELAY: Config.randomCarSpawnTime,
-      CAR_LIFESPAN: Config.carLifespan,
-    },
-  }
-);
+
+  invoke: {
+    src:
+      ({ app, car }) =>
+      () => {
+        app.road.container.addChild(car.sprite);
+        app.pixiApp.ticker.add(car.drive);
+
+        return () => {
+          app.pixiApp.ticker.remove(car.drive);
+          app.road.container.removeChild(car.sprite);
+        };
+      },
+  },
+});
 
 export const carMachineWithContext = (app: App, car: Car, frontCar?: Car) => {
   if (frontCar) {

@@ -65,16 +65,11 @@ export class Config {
   // Driving configuration
   static minDistanceBetweenCars = 25;
 
-  // Aproximate time we remove the car from container. Depends on app width (road length)
-  static get carLifespan() {
-    return this.appWidth * 15;
-  }
-
   static randomCarSpawnTime() {
     return random(1000, 2000);
   }
 
   static randomMaxSpeed() {
-    return random(2.5, 3.5, true);
+    return random(2, 3.5, true);
   }
 }

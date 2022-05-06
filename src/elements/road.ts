@@ -4,10 +4,10 @@ import { Config } from "../config";
 
 export class Road {
   public container: PIXI.Container;
-  private app: PIXI.Application;
+  private pixiApp: PIXI.Application;
 
-  constructor(app: PIXI.Application) {
-    this.app = app;
+  constructor(pixiApp: PIXI.Application) {
+    this.pixiApp = pixiApp;
     this.container = this.createContainer();
   }
 
@@ -15,9 +15,9 @@ export class Road {
     const container = new PIXI.Container();
 
     container.x = 0;
-    container.y = this.app.renderer.height / 2 - Config.roadTotalWidth / 2;
+    container.y = this.pixiApp.renderer.height / 2 - Config.roadTotalWidth / 2;
     container.height = Config.roadTotalWidth;
-    container.width = this.app.renderer.width;
+    container.width = this.pixiApp.renderer.width;
 
     container.addChild(this.createSurface());
     container.addChild(this.createSeparatingLines());
@@ -30,7 +30,7 @@ export class Road {
 
     graphics.clear();
     graphics.beginFill(0x484848);
-    graphics.drawRect(0, 0, this.app.renderer.width, Config.roadTotalWidth);
+    graphics.drawRect(0, 0, this.pixiApp.renderer.width, Config.roadTotalWidth);
     graphics.endFill();
 
     return graphics;
@@ -46,20 +46,20 @@ export class Road {
     graphics.drawRect(
       0,
       Config.roadPadding,
-      this.app.renderer.width,
+      this.pixiApp.renderer.width,
       Config.lanesSeparatorWidth
     );
     graphics.drawRect(
       0,
       Config.roadTotalWidth - Config.roadPadding - Config.lanesSeparatorWidth,
-      this.app.renderer.width,
+      this.pixiApp.renderer.width,
       Config.lanesSeparatorWidth
     );
 
     // Draw dashed lines between lanes
     range(
       -(Config.dashedLinesLength / 2),
-      this.app.renderer.width,
+      this.pixiApp.renderer.width,
       Config.dashedLinesLength * 1.5
     ).forEach((x) => {
       range(

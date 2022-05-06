@@ -26,6 +26,10 @@ export class Car {
     this.sprite.y = this.calculateY(laneNumber);
   };
 
+  public hasJustPassedPoint = (value: number) => {
+    return this.sprite.x > value && this.sprite.x - this.speed <= value;
+  };
+
   public isCloseToFrontCar = (): boolean => {
     if (!this.frontCar) {
       return false;
